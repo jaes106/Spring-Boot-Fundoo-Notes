@@ -1,208 +1,184 @@
-# Fundoo Notes Backend — Part 1
+# Fundoo Notes Backend
 
-## 1. Project Overview
+## Project Overview
 
-Fundoo Notes is a backend application built using Spring Boot that simulates a real-world note management system.  
-It allows users to register, log in, and manage personal notes.
+Fundoo Notes is a backend application developed using Spring Boot. It is designed to manage user accounts and notes with a scalable, layered architecture. The project is built incrementally using use cases (UCs), progressing from basic backend development to advanced distributed system concepts.
 
-Part 1 focuses on establishing strong backend fundamentals, including architecture, API design, persistence, and error handling.
-
----
-
-## 2. Objectives of Part 1
-
-- Build a Spring Boot application using layered architecture
-- Understand request flow from controller to database
-- Implement REST APIs for user and notes
-- Apply DTO-based design
-- Use JPA for persistence
-- Implement validation and global exception handling
-- Introduce basic token-based user identification
+The application demonstrates real-world backend practices including REST API design, database integration, validation, exception handling, caching, asynchronous messaging, and cross-cutting concerns.
 
 ---
 
-## 3. Architecture
+## Architecture
 
-The application follows a layered architecture:
+The project follows a layered architecture:
 
-Controller → Service → Repository → Database
-↓
-DTO Layer
-↓
-Exception Handling
+Controller → Service → DTO → Entity → Repository → Database
 
-### Layer Responsibilities
+### Layers
 
-- **Controller**
-  - Handles HTTP requests and responses
-  - Delegates logic to service layer
+- **Controller Layer**  
+  Handles HTTP requests and responses.
 
-- **Service**
-  - Contains business logic
-  - Coordinates between controller and repository
+- **Service Layer**  
+  Contains business logic and application flow.
 
-- **Repository**
-  - Handles database operations using Spring Data JPA
+- **DTO Layer**  
+  Transfers data between client and server with validation.
 
-- **DTO**
-  - Controls input and output data
-  - Prevents direct exposure of entity classes
+- **Entity Layer**  
+  Represents database tables using JPA.
 
-- **Exception Layer**
-  - Centralized error handling using `@RestControllerAdvice`
+- **Repository Layer**  
+  Handles database operations using Spring Data JPA.
 
-## 4. Technologies Used
+- **Exception Layer**  
+  Provides centralized error handling.
 
-- Java 17
-- Spring Boot
-- Spring Web
+---
+
+## Technologies Used
+
+- Java 21/25
+- Spring Boot 4
 - Spring Data JPA
 - MySQL
-- Lombok
-- Bean Validation (Jakarta Validation)
+- Redis (Caching)
+- RabbitMQ (Messaging)
+- Spring AOP
+- Spring Batch
+- Maven
+- Git & GitHub
 
 ---
 
-## 5. Configuration
+## Part 1 — Backend Fundamentals
 
-Configuration is externalized using `application.properties`.
+### Objective
 
-### Key Configurations
-
-- Database connection
-- JPA behavior
-- Logging levels
-
-Example:
-spring.datasource.url=jdbc:mysql://localhost:3306/fundoo_notes
-spring.datasource.username=root
-spring.datasource.password=root
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-
+To build a strong backend foundation using Spring Boot with proper layering, REST APIs, and database integration.
 
 ---
 
-## 6. Features Implemented
+### Implemented Use Cases
 
-### 6.1 User Management
+#### UC1 — Project Setup and Configuration
+- Spring Boot project initialization
+- application.properties configuration
 
-- User Registration
-- User Login
+#### UC2 — Entity and Repository Layer
+- Created User and Note entities
+- Implemented JPA repositories
 
-Flow:
-1. User sends request
-2. DTO validates input
-3. Service processes logic
-4. Repository persists data
-5. Response returned
+#### UC3 — DTO Layer
+- Request and response DTOs
+- Separation of API and database models
 
----
+#### UC4 — Service Layer
+- Business logic for user and note operations
 
-### 6.2 Notes Management
+#### UC5 — Controller Layer
+- REST APIs for user and note management
 
-- Create Note
-- Get All Notes
+#### UC6 — Exception Handling
+- Global exception handler
+- Custom exceptions (UserNotFound, InvalidCredentials, etc.)
 
-Each note is associated with a user.
-
----
-
-### 6.3 Token-Based Identification (Basic)
-
-- A simple token is generated after login
-- Token is passed in request headers
-- Used to identify the user
-
-Note: This is a simplified version (not full Spring Security)
+#### UC7 — Authentication Flow
+- Basic login system
+- Token generation utility
 
 ---
 
-### 6.4 Validation
+### Features Achieved
 
-- Implemented using annotations:
-  - `@NotBlank`
-  - `@Email`
-- Triggered using `@Valid` in controller
-
----
-
-### 6.5 Global Exception Handling
-
-Centralized error handling using:
-@RestControllerAdvice
-
-Handled exceptions:
-- UserAlreadyExistsException
-- UserNotFoundException
-- InvalidCredentialsException
-- Validation errors
+- Layered architecture
+- RESTful API design
+- Database integration (MySQL)
+- DTO validation
+- Global exception handling
+- Clean request-response flow
 
 ---
 
-### 6.6 Logging
+## Part 2 — Advanced Backend Development
 
-Logging is configured using:
-logging.level.root=INFO
-logging.level.com.fundoonotes=DEBUG
+### Objective
 
-
-Used to track:
-- Application flow
-- Debug information
+To enhance the backend with scalable and production-level features such as caching, messaging, AOP, and batch processing.
 
 ---
 
-## 7. API Endpoints
+### Implemented Use Cases
 
-### User APIs
+#### UC8 — Dependencies and Configuration
+- Added Redis, RabbitMQ, AOP, and Batch dependencies
+- Configured application properties
 
-#### Register
-POST /api/users/register
+#### UC9 — Redis Caching
+- Implemented token caching using Redis
+- Improved performance for authentication
 
+#### UC10 — RabbitMQ Messaging
+- Configured exchanges, queues, and bindings
+- Implemented producer and consumer
 
-#### Login
+#### UC11 — Service Integration
+- Integrated Redis and RabbitMQ into service layer
+- Async event triggered on user registration
 
-POST /api/users/login
+#### UC12 — AOP Logging
+- Implemented aspect-based logging
+- Logging applied to service layer methods
 
----
+#### UC13 — Spring Batch Setup
+- Basic batch configuration for future bulk operations
 
-### Note APIs
-
-#### Create Note
-
-POST /api/notes
-
-Header:
-
-Authorization: TOKEN_<userId>
-
-#### Get Notes
-
-GET /api/notes
-
-Header:
-
-Authorization: TOKEN_<userId>
+#### UC14 — Application Refactor
+- Corrected main application class naming and structure
 
 ---
 
-## 8. Key Learnings
+### Features Achieved
 
-- Importance of layered architecture
-- Separation of concerns
-- DTO vs Entity design
-- JPA abstraction over SQL
-- Centralized exception handling
-- Request validation
-- Basic token-based flow
+- Asynchronous processing using RabbitMQ
+- Distributed caching using Redis
+- AOP-based logging
+- Scalable backend design principles
+- Integration of multiple backend technologies
 
 ---
 
-## 9. Limitations (Part 1 Scope)
+## API Flow (Example)
 
-- No real authentication (JWT not implemented)
-- Passwords are not encrypted
-- No role-based authorization
-- No advanced features (labels, reminders, etc.)
+User Registration Flow:
+
+1. Request hits Controller  
+2. DTO validation occurs  
+3. Service processes business logic  
+4. Data saved via Repository  
+5. RabbitMQ event triggered  
+6. Response returned to client  
+
+---
+
+## How to Run the Project
+
+### Prerequisites
+
+- Java installed
+- MySQL running
+- Redis running (WSL or local)
+- RabbitMQ running
+
+---
+
+### Steps
+
+1. Clone the repository  
+2. Configure database in application.properties  
+3. Start Redis server  
+4. Start RabbitMQ server  
+5. Run the application:
+
+```bash
+mvn spring-boot:run
