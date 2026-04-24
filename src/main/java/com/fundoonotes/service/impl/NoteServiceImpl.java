@@ -7,6 +7,7 @@ import com.fundoonotes.entity.User;
 import com.fundoonotes.repository.*;
 import com.fundoonotes.service.NoteService;
 import com.fundoonotes.util.TokenUtil;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,10 +54,10 @@ public class NoteServiceImpl implements NoteService {
         );
     }
 
+    @Cacheable(value = "notes", key = "#token")
     @Override
     public List<NoteResponseDto> getAll(String token) {
         User user = getUser(token);
-
         return noteRepository.findByUserId(user.getId())
                 .stream()
                 .map(n -> new NoteResponseDto(
@@ -67,6 +68,6 @@ public class NoteServiceImpl implements NoteService {
                         n.isArchived(),
                         n.isTrashed()
                 ))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
